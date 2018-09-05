@@ -10,6 +10,16 @@
 
 	<!-- 引入项目依赖的jar包版本4.3.7 -->
 	<dependencies>
+
+		<!-- pagehelper分页插件 -->
+		<dependency>
+			<groupId>com.github.pagehelper</groupId>
+			<artifactId>pagehelper</artifactId>
+			<version>5.0.0</version>
+		</dependency>
+
+
+
 		<!-- https://mvnrepository.com/artifact/org.mybatis.generator/mybatis-generator-core -->
 		<dependency>
 			<groupId>org.mybatis.generator</groupId>
@@ -25,6 +35,15 @@
 			<artifactId>spring-webmvc</artifactId>
 			<version>4.3.7.RELEASE</version>
 		</dependency>
+
+		<!-- 返回json字符串的支持 -->
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.8.8</version>
+		</dependency>
+
 
 		<!-- spring Jdbc -->
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-jdbc -->
@@ -90,13 +109,15 @@
 			<artifactId>jstl</artifactId>
 			<version>1.2</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/javax.servlet/servlet-api -->
+
+		<!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/junit/junit -->
 		<dependency>
 			<groupId>junit</groupId>

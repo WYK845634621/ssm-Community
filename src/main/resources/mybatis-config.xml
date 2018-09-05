@@ -8,12 +8,18 @@
 <configuration>
 
 	<settings>
-	<!-- 驼峰命名法		name可以网上MYbatis官方文档 -->
-		<setting name="mapUnderscoreToCamelCase" value="true"/>
+		<!-- 驼峰命名法 name可以网上MYbatis官方文档 -->
+		<setting name="mapUnderscoreToCamelCase" value="true" />
 	</settings>
 	<typeAliases>
-	<!-- 别名 -->
-		<package name="com.yikai.community.bean"/>
+		<!-- 别名 -->
+		<package name="com.yikai.community.bean" />
 	</typeAliases>
+
+	<plugins>
+		<!-- com.github.pagehelper为PageHelper类所在包名 -->
+		<plugin interceptor="com.github.pagehelper.PageInterceptor">
+		</plugin>
+	</plugins>
 
 </configuration>
