@@ -6,13 +6,33 @@
     <result column="doctor_name" jdbcType="VARCHAR" property="doctorName" />
     <result column="gender" jdbcType="CHAR" property="gender" />
     <result column="age" jdbcType="INTEGER" property="age" />
-    <result column="phone" jdbcType="INTEGER" property="phone" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
     <result column="email" jdbcType="VARCHAR" property="email" />
     <result column="address" jdbcType="VARCHAR" property="address" />
-    <result column="idCard" jdbcType="INTEGER" property="idcard" />
+    <result column="idCard" jdbcType="VARCHAR" property="idcard" />
     <result column="c_id" jdbcType="INTEGER" property="cId" />
     <result column="s_id" jdbcType="INTEGER" property="sId" />
   </resultMap>
+  
+  
+   <resultMap type="com.yikai.community.bean.Doctor" id="WithCmyResultMap">
+  	<id column="doctor_id" jdbcType="INTEGER" property="doctorId" />
+    <result column="doctor_name" jdbcType="VARCHAR" property="doctorName" />
+    <result column="gender" jdbcType="CHAR" property="gender" />
+    <result column="age" jdbcType="INTEGER" property="age" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="idCard" jdbcType="VARCHAR" property="idcard" />
+    <result column="c_id" jdbcType="INTEGER" property="cId" />
+    <result column="s_id" jdbcType="INTEGER" property="sId" />
+    <association property="community" javaType="com.yikai.community.bean.Community">
+    	<id column="cmy_id" property="cmyId"/>
+    	<result column="cmy_name" property="cmyName"/>
+    </association>
+  </resultMap>
+  
+  
   <sql id="Example_Where_Clause">
     <where>
       <foreach collection="oredCriteria" item="criteria" separator="or">
@@ -74,6 +94,35 @@
   <sql id="Base_Column_List">
     doctor_id, doctor_name, gender, age, phone, email, address, idCard, c_id, s_id
   </sql>
+  
+  <sql id="WithCmy_Column_List">
+  		d.doctor_id, d.doctor_name, d.gender, d.age, d.phone, d.email, d.address, d.idCard, d.c_id, d.s_id, c.cmy_id, c.cmy_name
+  </sql>
+  
+   <!-- 自定义的两个查询方法 -->
+  <select id="selectByExampleWithCmy" resultMap="WithCmyResultMap">
+  		select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="WithCmy_Column_List" />
+    from tbl_doctor d LEFT JOIN tbl_cmy c ON d.c_id = c.cmy_id
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  
+  </select>
+  <select id="selectByPrimaryKeyWithCmy" resultMap="WithCmyResultMap">
+  	 select 
+    <include refid="WithCmy_Column_List" />
+    FROM tbl_doctor d LEFT JOIN tbl_cmy c
+    where doctor_id = #{doctorId,jdbcType=INTEGER}
+  </select>
+  
+  
   <select id="selectByExample" parameterType="com.yikai.community.bean.DoctorExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
@@ -110,8 +159,8 @@
       address, idCard, c_id, 
       s_id)
     values (#{doctorId,jdbcType=INTEGER}, #{doctorName,jdbcType=VARCHAR}, #{gender,jdbcType=CHAR}, 
-      #{age,jdbcType=INTEGER}, #{phone,jdbcType=INTEGER}, #{email,jdbcType=VARCHAR}, 
-      #{address,jdbcType=VARCHAR}, #{idcard,jdbcType=INTEGER}, #{cId,jdbcType=INTEGER}, 
+      #{age,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{address,jdbcType=VARCHAR}, #{idcard,jdbcType=VARCHAR}, #{cId,jdbcType=INTEGER}, 
       #{sId,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.yikai.community.bean.Doctor">
@@ -162,7 +211,7 @@
         #{age,jdbcType=INTEGER},
       </if>
       <if test="phone != null">
-        #{phone,jdbcType=INTEGER},
+        #{phone,jdbcType=VARCHAR},
       </if>
       <if test="email != null">
         #{email,jdbcType=VARCHAR},
@@ -171,7 +220,7 @@
         #{address,jdbcType=VARCHAR},
       </if>
       <if test="idcard != null">
-        #{idcard,jdbcType=INTEGER},
+        #{idcard,jdbcType=VARCHAR},
       </if>
       <if test="cId != null">
         #{cId,jdbcType=INTEGER},
@@ -203,7 +252,7 @@
         age = #{record.age,jdbcType=INTEGER},
       </if>
       <if test="record.phone != null">
-        phone = #{record.phone,jdbcType=INTEGER},
+        phone = #{record.phone,jdbcType=VARCHAR},
       </if>
       <if test="record.email != null">
         email = #{record.email,jdbcType=VARCHAR},
@@ -212,7 +261,7 @@
         address = #{record.address,jdbcType=VARCHAR},
       </if>
       <if test="record.idcard != null">
-        idCard = #{record.idcard,jdbcType=INTEGER},
+        idCard = #{record.idcard,jdbcType=VARCHAR},
       </if>
       <if test="record.cId != null">
         c_id = #{record.cId,jdbcType=INTEGER},
@@ -231,10 +280,10 @@
       doctor_name = #{record.doctorName,jdbcType=VARCHAR},
       gender = #{record.gender,jdbcType=CHAR},
       age = #{record.age,jdbcType=INTEGER},
-      phone = #{record.phone,jdbcType=INTEGER},
+      phone = #{record.phone,jdbcType=VARCHAR},
       email = #{record.email,jdbcType=VARCHAR},
       address = #{record.address,jdbcType=VARCHAR},
-      idCard = #{record.idcard,jdbcType=INTEGER},
+      idCard = #{record.idcard,jdbcType=VARCHAR},
       c_id = #{record.cId,jdbcType=INTEGER},
       s_id = #{record.sId,jdbcType=INTEGER}
     <if test="_parameter != null">
@@ -254,7 +303,7 @@
         age = #{age,jdbcType=INTEGER},
       </if>
       <if test="phone != null">
-        phone = #{phone,jdbcType=INTEGER},
+        phone = #{phone,jdbcType=VARCHAR},
       </if>
       <if test="email != null">
         email = #{email,jdbcType=VARCHAR},
@@ -263,7 +312,7 @@
         address = #{address,jdbcType=VARCHAR},
       </if>
       <if test="idcard != null">
-        idCard = #{idcard,jdbcType=INTEGER},
+        idCard = #{idcard,jdbcType=VARCHAR},
       </if>
       <if test="cId != null">
         c_id = #{cId,jdbcType=INTEGER},
@@ -279,10 +328,10 @@
     set doctor_name = #{doctorName,jdbcType=VARCHAR},
       gender = #{gender,jdbcType=CHAR},
       age = #{age,jdbcType=INTEGER},
-      phone = #{phone,jdbcType=INTEGER},
+      phone = #{phone,jdbcType=VARCHAR},
       email = #{email,jdbcType=VARCHAR},
       address = #{address,jdbcType=VARCHAR},
-      idCard = #{idcard,jdbcType=INTEGER},
+      idCard = #{idcard,jdbcType=VARCHAR},
       c_id = #{cId,jdbcType=INTEGER},
       s_id = #{sId,jdbcType=INTEGER}
     where doctor_id = #{doctorId,jdbcType=INTEGER}

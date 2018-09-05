@@ -2,7 +2,7 @@ package com.yikai.community.bean;
 
 import java.util.ArrayList;
 import java.util.List;
-//Example就是条件的意思
+
 public class CommunityExample {
     protected String orderByClause;
 

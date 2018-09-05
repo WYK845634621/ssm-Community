@@ -34,6 +34,16 @@
 			<version>4.3.7.RELEASE</version>
 		</dependency>
 
+		<!-- spring单元测试模块 -->
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-test -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>4.3.7.RELEASE</version>
+			<scope>test</scope>
+		</dependency>
+
+
 		<!-- spring切面 -->
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-aspects -->
 		<dependency>
@@ -47,7 +57,7 @@
 		<dependency>
 			<groupId>org.mybatis</groupId>
 			<artifactId>mybatis</artifactId>
-			<version>3.2.8</version>
+			<version>3.4.1</version>
 		</dependency>
 
 		<!-- MyBatis整合spring适配包 -->

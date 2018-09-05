@@ -9,19 +9,50 @@ public class Doctor {
 
     private Integer age;
 
-    private Integer phone;
+    private String phone;
 
     private String email;
 
     private String address;
 
-    private Integer idcard;
+    private String idcard;
 
     private Integer cId;
 
     private Integer sId;
+    
+//    自定义community属性
+    private Community community;
+    
 
-    public Integer getDoctorId() {
+    public Doctor() {
+	super();
+}
+
+	public Doctor(Integer doctorId, String doctorName, String gender, Integer age, String phone, String email,
+		String address, String idcard, Integer cId, Integer sId) {
+	super();
+	this.doctorId = doctorId;
+	this.doctorName = doctorName;
+	this.gender = gender;
+	this.age = age;
+	this.phone = phone;
+	this.email = email;
+	this.address = address;
+	this.idcard = idcard;
+	this.cId = cId;
+	this.sId = sId;
+}
+
+	public Community getCommunity() {
+		return community;
+	}
+
+	public void setCommunity(Community community) {
+		this.community = community;
+	}
+
+	public Integer getDoctorId() {
         return doctorId;
     }
 
@@ -53,12 +84,12 @@ public class Doctor {
         this.age = age;
     }
 
-    public Integer getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(Integer phone) {
-        this.phone = phone;
+    public void setPhone(String phone) {
+        this.phone = phone == null ? null : phone.trim();
     }
 
     public String getEmail() {
@@ -77,12 +108,12 @@ public class Doctor {
         this.address = address == null ? null : address.trim();
     }
 
-    public Integer getIdcard() {
+    public String getIdcard() {
         return idcard;
     }
 
-    public void setIdcard(Integer idcard) {
-        this.idcard = idcard;
+    public void setIdcard(String idcard) {
+        this.idcard = idcard == null ? null : idcard.trim();
     }
 
     public Integer getcId() {
