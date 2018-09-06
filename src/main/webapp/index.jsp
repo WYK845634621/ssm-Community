@@ -24,6 +24,95 @@
 </head>
 <body>
 
+	<!-- 医生添加的Modal 学名模态框  详情见bootstrap-->
+	<div class="modal fade" id="doctorAddModal" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">添加医生</h4>
+				</div>
+				<div class="modal-body">
+
+					<form class="form-horizontal">
+					
+						
+						<div class="form-group">
+							<label class="col-sm-2 control-label">doctorName</label>
+							<div class="col-sm-10">
+								<input type="text" name="doctorName" class="form-control" id="doctorName_add_input" placeholder="doctorName">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">gender</label>
+							<div class="col-sm-10">
+								<label class="radio-inline"> <input type="radio" name="gender" id="gender1_add_input" value="M" checked="checked">男</label> 
+								<label class="radio-inline"> <input type="radio" name="gender" id="gender2_add_input" value="F">女</label>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">age</label>
+							<div class="col-sm-10">
+								<input type="text" name="age" class="form-control" id="age_add_input" placeholder="age">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">phone</label>
+							<div class="col-sm-10">
+								<input type="text" name="phone" class="form-control" id="phone_add_input" placeholder="phone">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Email</label>
+							<div class="col-sm-10">
+								<input type="email" name="email" class="form-control" id="email_add_input" placeholder="xxxxx@163.com">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">address</label>
+							<div class="col-sm-10">
+								<input type="text" name="address" class="form-control" id="address_add_input" placeholder="address">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">idcard</label>
+							<div class="col-sm-10">
+								<input type="text" name="idcard" class="form-control" id="idcard_add_input" placeholder="18位居民身份证">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">sId</label>
+							<div class="col-sm-10">
+								<input type="text" name="sId" class="form-control" id="sId_add_input" placeholder="病人ID">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">cmyName</label>
+							<div class="col-sm-3">
+								<select class="form-control" name="cId" id="community_add_select">
+								  
+								</select>
+							</div>
+						</div>
+						
+						
+					</form>
+
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary">保存</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
 	<div class="container">
 
 		<!-- 标题 -->
@@ -35,7 +124,7 @@
 		<!-- 按钮 -->
 		<div class="row">
 			<div class="col-md-4 col-md-offset-8">
-				<button class="btn btn-info">新增</button>
+				<button class="btn btn-info" id="doctor_add_model_btn">新增</button>
 				<button class="btn btn-danger">删除</button>
 			</div>
 		</div>
@@ -78,9 +167,12 @@
 	<script type="text/javascript">
 		//1.页面加载完成以后，使用ajax获取分页信息
 		$(function () {
+			to_page(1);
+		});
+		function to_page(pn) {
 			$.ajax({
 				url:"${APP_PATH}/doctors",
-				data:"pn=1",
+				data:"pn="+pn,
 				type:"GET",
 				success:function(result){
 					//console.log(result);
@@ -92,9 +184,10 @@
 					build_page_nav(result);
 				}
 			});
-		});
+		}
 		
 		function build_doctors_table(result) {
+			$("#doctors_table tbody").empty();
 			var doctors = result.extend.pageInfo.list;
 			$.each(doctors,function(index,item){
 				var doctorIdTd = $("<td></td>").append(item.doctorId);
@@ -123,27 +216,88 @@
 		
 		//解析显示分页信息
 		function build_page_info(result) {
+			$("#page_info_area").empty();
 			$("#page_info_area").append("当前"+result.extend.pageInfo.pageNum +"页,共"+result.extend.pageInfo.pages+"页,存在"+result.extend.pageInfo.total+"条记录");
 		}
 		
 		//解析显示分页条
 		function build_page_nav(result) {
+			$("#page_nav_area").empty();
 			var ul = $("<ul></ul>").addClass("pagination");
 			var firstPageLi = $("<li></li>").append($("<a></a>").append("首页").attr("href","#"));
 			var prePageLi = $("<li></li>").append($("<a></a>").append("&laquo;"));
+			if (result.extend.pageInfo.hasPreviousPage == false) {
+				firstPageLi.addClass("disabled");
+				prePageLi.addClass("disabled");
+			}else {
+				
+			firstPageLi.click(function () {
+				to_page(1);
+			});
+			prePageLi.click(function () {
+				to_page(result.extend.pageInfo.pageNum - 1);
+			});
+			}
+			
 			var nextPageLi = $("<li></li>").append($("<a></a>").append("&raquo;"));
 			var lastPageLi = $("<li></li>").append($("<a></a>").append("末页").attr("href","#"));
+			if (result.extend.pageInfo.hasNextPage == false) {
+				nextPageLi.addClass("disabled");
+				lastPageLi.addClass("disabled");
+			}else {
+				
+			lastPageLi.click(function () {
+				to_page(result.extend.pageInfo.pages);
+			});
+			nextPageLi.click(function () {
+				to_page(result.extend.pageInfo.pageNum + 1);
+			});
+			}
+			
+			
 			//添加首页和前一页的提示
 			ul.append(firstPageLi).append(prePageLi);
 			//遍历给ul中添加页码提示
 			$.each(result.extend.pageInfo.navigatepageNums,function(index,item){
 				var numLi = $("<li></li>").append($("<a></a>").append(item));
+				if (result.extend.pageInfo.pageNum == item) {
+					numLi.addClass("active");
+				}
+				numLi.click(function () {
+					to_page(item);
+				});
 				ul.append(numLi);
 			});
 			ul.append(nextPageLi).append(lastPageLi);
 			//把ul加入nav
 			var navEle = $("<nav></nav>").append(ul);
 			navEle.appendTo("#page_nav_area");
+		}
+		
+		$("#doctor_add_model_btn").click(function () {
+			//发送ajax请求，查出部门信息，显示下拉列表
+			getCommunitys();
+			
+			//弹出模态框
+			$("#doctorAddModal").modal({
+				backdrop:"static"
+			});
+		});
+		//查出所有社区信息并显示在下拉框
+		function getCommunitys() {
+			$.ajax({
+				url:"${APP_PATH}/communitys",
+				type:"GET",
+				success:function(result){
+					/* 返回的json字符串:{"code":100,"msg":"处理成功","extend":{"communitys":[{"cmyId":1,"cmyName":"开源社区"},{"cmyId":2,"cmyName":"apple社区"}]}} */
+					//使其显示在下拉列表中
+					//$("#doctorAddModal select").append("")
+					$.each(result.extend.communitys,function(){
+						var optionEle = $("<option></option>").append(this.cmyName).attr("value",this.cmyId);
+						optionEle.appendTo("#doctorAddModal select");
+					});
+				}
+			});
 		}
 		
 	</script>
