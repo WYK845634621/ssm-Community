@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -20,6 +21,28 @@ public class DoctorController {
 	
 	@Autowired
 	DoctorService doctorService;
+	
+	
+//	添加doctor保存   	
+	@RequestMapping(value="/doctor", method=RequestMethod.POST)
+	@ResponseBody
+	public Msg saveDoctor(Doctor doctor){
+		doctorService.saveDoctor(doctor);
+		return Msg.success();
+	}
+	
+//	检查用户名是否重复，返回true即代表可用
+	@ResponseBody
+	@RequestMapping("/checkuse")
+	public Msg checkuse(@RequestParam("doctorName") String doctorName){
+		boolean b = doctorService.checkUser(doctorName);
+		if (b) {
+			return Msg.success();
+		}else {
+			return Msg.fail();
+		}
+	}
+	
 	
 //	responseBody正常工作需要导入jackson包
 	@RequestMapping("/doctors")

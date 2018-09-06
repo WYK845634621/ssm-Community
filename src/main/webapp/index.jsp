@@ -45,6 +45,7 @@
 							<label class="col-sm-2 control-label">doctorName</label>
 							<div class="col-sm-10">
 								<input type="text" name="doctorName" class="form-control" id="doctorName_add_input" placeholder="doctorName">
+								<span class="help-block"></span>
 							</div>
 						</div>
 						<div class="form-group">
@@ -64,12 +65,14 @@
 							<label class="col-sm-2 control-label">phone</label>
 							<div class="col-sm-10">
 								<input type="text" name="phone" class="form-control" id="phone_add_input" placeholder="phone">
+								<span class="help-block"></span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label">Email</label>
 							<div class="col-sm-10">
 								<input type="email" name="email" class="form-control" id="email_add_input" placeholder="xxxxx@163.com">
+								<span class="help-block"></span>
 							</div>
 						</div>
 						<div class="form-group">
@@ -106,7 +109,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-primary">保存</button>
+					<button type="button" class="btn btn-primary" id="doctor_save_btn">保存</button>
 				</div>
 			</div>
 		</div>
@@ -165,6 +168,7 @@
 	</div>
 
 	<script type="text/javascript">
+		var totalRecord;
 		//1.页面加载完成以后，使用ajax获取分页信息
 		$(function () {
 			to_page(1);
@@ -218,6 +222,7 @@
 		function build_page_info(result) {
 			$("#page_info_area").empty();
 			$("#page_info_area").append("当前"+result.extend.pageInfo.pageNum +"页,共"+result.extend.pageInfo.pages+"页,存在"+result.extend.pageInfo.total+"条记录");
+			totalRecord = result.extend.pageInfo.total;
 		}
 		
 		//解析显示分页条
@@ -299,6 +304,88 @@
 				}
 			});
 		}
+		//按照格式校验表单数据
+		function validate_add_form() {
+			var doctorName = $("#doctorName_add_input").val();
+			var regName = /(^[a-zA-Z0-9_-]{6,16}$)|(^[\u2E80-\u9FFF]{2,4})$/;
+			if (!regName.test(doctorName)) {
+				show_validate_msg("#doctorName_add_input","error","姓名可以是2-4个汉字或者6-16英文数字组合");
+				return false;
+			}else {
+				show_validate_msg("#doctorName_add_input","success","");
+			};
+			
+			var phone = $("#phone_add_input").val();
+			var regPhone = /^[1][3,4,5,7,8][0-9]{9}$/;
+			if (!regPhone.test(phone)) {
+				show_validate_msg("#phone_add_input","error","手机号必须是13/5/7/8开头的十一位数字");
+				return false;
+			}else {
+				show_validate_msg("#phone_add_input","success","");
+			};
+			
+			var email = $("#email_add_input").val();
+			var regEmail = /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/;
+			if (!regEmail.test(email)) {
+				show_validate_msg("#email_add_input","error","邮箱格式不正确");
+				return false;
+			}else {
+				show_validate_msg("#email_add_input","success","");
+			}
+			
+			
+			return true;
+		}
+		
+		function show_validate_msg(ele,status,msg) {
+			//清除校验状态
+			$(ele).parent().removeClass("has-success has-error");
+			$(ele).next("span").text("");
+			if ("success" == status) {
+				$(ele).parent().addClass("has-success");
+				$(ele).next("span").text(msg);
+			}else {
+				$(ele).parent().addClass("has-error");
+				$(ele).next("span").text(msg);
+			}
+		}
+		
+		$("#doctorName_add_input").change(function () {
+			var doctorName = this.value;
+				$.ajax({
+					url:"${APP_PATH}/checkuse",
+					data:"doctorName="+doctorName,
+					type:"POST",
+					success:function(result){
+						if (result.code == 100) {
+							show_validate_msg("#doctorName_add_input","success","用户名可用");
+						}else {
+							show_validate_msg("#doctorName_add_input","error","用户名不可用");
+						}
+					}
+				});
+		});
+		
+		$("#doctor_save_btn").click(function () {
+			//1.将模态框中填写的数据交给服务器保存,POST请求就是保存,需要先进性数据校验
+			if (!validate_add_form()) {
+				return false;
+			}
+			
+			//2.发送ajax请求保存
+			  $.ajax({
+				url:"${APP_PATH}/doctor",
+				type:"POST",
+				data:$("#doctorAddModal form").serialize(),
+				success:function(result){
+					//doctor保存成功后，需要关闭添加框，同时回到最后一页显示刚才添加的数据
+					$("#doctorAddModal").modal('hide');
+					to_page(totalRecord);
+				}
+			});  
+			
+		});
+		
 		
 	</script>
 
