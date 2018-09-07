@@ -24,7 +24,95 @@
 </head>
 <body>
 
-	<!-- 医生添加的Modal 学名模态框  详情见bootstrap-->
+<!-- 对医生进行编更新出现的模态框 -->
+	<div class="modal fade" id="doctorUpdateModal" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" >编辑医生</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal">
+						<div class="form-group">
+							<label class="col-sm-2 control-label">doctorName</label>
+							<div class="col-sm-10">
+								<p class="form-control-static" id="doctorName_update_static">l</p>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">gender</label>
+							<div class="col-sm-10">
+								<label class="radio-inline"> <input type="radio" name="gender" id="gender1_update_input" value="M" checked="checked">男</label> 
+								<label class="radio-inline"> <input type="radio" name="gender" id="gender2_update_input" value="F">女</label>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">age</label>
+							<div class="col-sm-10">
+								<input type="text" name="age" class="form-control" id="age_update_input" placeholder="age">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">phone</label>
+							<div class="col-sm-10">
+								<input type="text" name="phone" class="form-control" id="phone_update_input" placeholder="phone">
+								<span class="help-block"></span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Email</label>
+							<div class="col-sm-10">
+								<input type="email" name="email" class="form-control" id="email_update_input" placeholder="xxxxx@163.com">
+								<span class="help-block"></span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">address</label>
+							<div class="col-sm-10">
+								<input type="text" name="address" class="form-control" id="address_update_input" placeholder="address">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">idcard</label>
+							<div class="col-sm-10">
+								<input type="text" name="idcard" class="form-control" id="idcard_update_input" placeholder="18位居民身份证">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">sId</label>
+							<div class="col-sm-10">
+								<input type="text" name="sId" class="form-control" id="sId_update_input" placeholder="病人ID">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">cmyName</label>
+							<div class="col-sm-3">
+								<select class="form-control" name="cId" id="community_update_select">
+								</select>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary" id="doctor_update_btn">更新</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+
+
+<!-- 医生添加的Modal 学名模态框  详情见bootstrap-->
 	<div class="modal fade" id="doctorAddModal" tabindex="-1" role="dialog"
 		aria-labelledby="myModalLabel">
 		<div class="modal-dialog" role="document">
@@ -37,10 +125,7 @@
 					<h4 class="modal-title" id="myModalLabel">添加医生</h4>
 				</div>
 				<div class="modal-body">
-
 					<form class="form-horizontal">
-					
-						
 						<div class="form-group">
 							<label class="col-sm-2 control-label">doctorName</label>
 							<div class="col-sm-10">
@@ -97,15 +182,10 @@
 							<label class="col-sm-2 control-label">cmyName</label>
 							<div class="col-sm-3">
 								<select class="form-control" name="cId" id="community_add_select">
-								  
 								</select>
 							</div>
 						</div>
-						
-						
 					</form>
-
-
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -128,7 +208,7 @@
 		<div class="row">
 			<div class="col-md-4 col-md-offset-8">
 				<button class="btn btn-info" id="doctor_add_model_btn">新增</button>
-				<button class="btn btn-danger">删除</button>
+				<button class="btn btn-danger" id="doctor_delete_all_model_btn">删除</button>
 			</div>
 		</div>
 		<!-- 表格数据 -->
@@ -137,6 +217,7 @@
 				<table class="table table-hover" id="doctors_table">
 				<thead>
 					<tr>
+						<th><input type="checkbox" id="check_all"/></th>
 						<th>#</th>
 						<th>doctorName</th>
 						<th>gender</th>
@@ -168,7 +249,7 @@
 	</div>
 
 	<script type="text/javascript">
-		var totalRecord;
+		var totalRecord, currentPage;
 		//1.页面加载完成以后，使用ajax获取分页信息
 		$(function () {
 			to_page(1);
@@ -194,6 +275,7 @@
 			$("#doctors_table tbody").empty();
 			var doctors = result.extend.pageInfo.list;
 			$.each(doctors,function(index,item){
+				var checkBoxTd = $("<td><input type='checkbox' class='check_item'/></td>")
 				var doctorIdTd = $("<td></td>").append(item.doctorId);
 				var doctorNameTd = $("<td></td>").append(item.doctorName);
 				var genderTd = $("<td></td>").append(item.gender == 'M'?'男':'女');
@@ -211,10 +293,14 @@
 								删除
 							</button>
 								*/
-				var editBtn = $("<button></button>").addClass("btn btn-primary btn-xs").append($("<span></span>").addClass("glyphicon glyphicon-pencil")).append("编辑");
-				var delBtn = $("<button></button>").addClass("btn btn-danger btn-xs").append($("<span></span>").addClass("glyphicon glyphicon-trash")).append("删除");
+				var editBtn = $("<button></button>").addClass("btn btn-primary btn-xs edit_btn").append($("<span></span>").addClass("glyphicon glyphicon-pencil")).append("编辑");
+				//为编辑按钮添加自定义的属性，便于显示doctor的id
+				editBtn.attr("doctor-id",item.doctorId);
+				var delBtn = $("<button></button>").addClass("btn btn-danger btn-xs delete_btn").append($("<span></span>").addClass("glyphicon glyphicon-trash")).append("删除");
+				//为删除按钮添加一个自定义的属性便于删除
+				delBtn.attr("delete-id",item.doctorId);
 				var btnTd = $("<td></td>").append(editBtn).append(" ").append(delBtn);
-				$("<tr></tr>").append(doctorIdTd).append(doctorNameTd).append(genderTd).append(ageTd).append(phoneTd).append(emailTd).append(addressTd).append(idcardTd).append(cIdTd).append(sIdTd).append(cmyNameTd).append(btnTd).appendTo("#doctors_table tbody");
+				$("<tr></tr>").append(checkBoxTd).append(doctorIdTd).append(doctorNameTd).append(genderTd).append(ageTd).append(phoneTd).append(emailTd).append(addressTd).append(idcardTd).append(cIdTd).append(sIdTd).append(cmyNameTd).append(btnTd).appendTo("#doctors_table tbody");
 			});
 		}
 		
@@ -223,6 +309,7 @@
 			$("#page_info_area").empty();
 			$("#page_info_area").append("当前"+result.extend.pageInfo.pageNum +"页,共"+result.extend.pageInfo.pages+"页,存在"+result.extend.pageInfo.total+"条记录");
 			totalRecord = result.extend.pageInfo.total;
+			currentPage = result.extend.pageInfo.pageNum;
 		}
 		
 		//解析显示分页条
@@ -290,7 +377,7 @@
 			//清除表单数据，即表单重置
 			reset_form("#doctorAddModal form");
 			//发送ajax请求，查出部门信息，显示下拉列表
-			getCommunitys();
+			getCommunitys("#doctorAddModal select");
 			
 			//弹出模态框
 			$("#doctorAddModal").modal({
@@ -298,7 +385,9 @@
 			});
 		});
 		//查出所有社区信息并显示在下拉框
-		function getCommunitys() {
+		function getCommunitys(ele) {
+			//先清空之前下拉列表的值
+			$(ele).empty();
 			$.ajax({
 				url:"${APP_PATH}/communitys",
 				type:"GET",
@@ -308,7 +397,7 @@
 					//$("#doctorAddModal select").append("")
 					$.each(result.extend.communitys,function(){
 						var optionEle = $("<option></option>").append(this.cmyName).attr("value",this.cmyId);
-						optionEle.appendTo("#doctorAddModal select");
+						optionEle.appendTo(ele);
 					});
 				}
 			});
@@ -323,7 +412,7 @@
 			}else {
 				show_validate_msg("#doctorName_add_input","success","");
 			};
-			
+			//电话验证
 			var phone = $("#phone_add_input").val();
 			var regPhone = /^[1][3,4,5,7,8][0-9]{9}$/;
 			if (!regPhone.test(phone)) {
@@ -332,7 +421,7 @@
 			}else {
 				show_validate_msg("#phone_add_input","success","");
 			};
-			
+			//邮箱验证
 			var email = $("#email_add_input").val();
 			var regEmail = /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/;
 			if (!regEmail.test(email)) {
@@ -413,6 +502,115 @@
 				}
 			});  
 			
+		});
+		
+		//为删除按钮绑定点击事件
+		$(document).on("click",".delete_btn",function(){
+			var doctorName = $(this).parents("tr").find("td:eq(2)").text();
+			var doctorId = $(this).attr("delete-id");
+			if (confirm("确认删除【" + doctorName + "】吗？")) {
+				$.ajax({
+					url:"${APP_PATH}/doctor/"+doctorId,
+					type : "DELETE",
+					success:function(result){
+						alert(result.msg);
+						to_page(currentPage);
+					}
+				});
+			}
+		});
+		
+		//可以再创建按钮的时候添加单击事件，但是代码耦合度太高，所以可以使用jQuery的live方法绑定，但是新版的jQuery方法废除了这个live,目前只能用on来绑定
+		$(document).on("click",".edit_btn",function () {
+			//弹出模态框
+			//先查出员工的id
+			getCommunitys("#doctorUpdateModal select");
+			getDoctor($(this).attr("doctor-id"));
+			$("#doctor_update_btn").attr("doctor-id",$(this).attr("doctor-id"));
+			$("#doctorUpdateModal").modal({
+				backdrop:"static"
+			});
+		});
+		function getDoctor(id) {
+			$.ajax({
+				url:"${APP_PATH}/doctor/"+id,
+				type:"GET",
+				success:function(result){
+					var doctorData = result.extend.doctor;
+					$("#doctorName_update_static").text(doctorData.doctorName);
+					$("#doctorUpdateModal input[name=gender]").val([doctorData.gender]);
+					$("#age_update_input").val(doctorData.age);
+					$("#phone_update_input").val(doctorData.phone);
+					$("#email_update_input").val(doctorData.email);
+					$("#address_update_input").val(doctorData.address);
+					$("#idcard_update_input").val(doctorData.idcard);
+					$("#sId_update_input").val(doctorData.sId);
+					$("#doctorUpdateModal select").val([doctorData.cId]);
+				}
+			});
+		}
+		
+		
+		//为更新按钮绑定事件
+		$("#doctor_update_btn").click(function () {
+			//邮箱验证
+			var email = $("#email_update_input").val();
+			var regEmail = /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/;
+			if (!regEmail.test(email)) {
+				show_validate_msg("#email_update_input","error","邮箱格式不正确");
+				return false;
+			}else {
+				show_validate_msg("#email_update_input","success","");
+			}
+			//发送ajax请求来保存更新
+			$.ajax({
+				url:"${APP_PATH}/doctor/"+$(this).attr("doctor-id"),
+				type:"PUT",
+				data:$("#doctorUpdateModal form").serialize(),
+				success:function(result){
+					//doctor保存成功后，需要关闭添加框，同时回到最后一页显示刚才添加的数据
+					$("#doctorUpdateModal").modal('hide');
+					to_page(currentPage);
+				}
+			});
+			
+		});
+		
+		//完成全选/全不选的功能
+		$("#check_all").click(function () {
+			//推荐使用prop代替attr来获取dom的值
+			$(".check_item").prop("checked",$(this).prop("checked"));
+		});
+		
+		//check_item绑定事件
+		$(document).on("click",".check_item",function(){
+			var flag = $(".check_item:checked").length == $(".check_item").length;
+			$("#check_all").prop("checked",flag);
+		});
+		
+		
+		//点击全部删除，尽心批量删除
+		$("#doctor_delete_all_model_btn").click(function () {
+			var doctorNames = "";
+			var del_idstr = "";
+			$.each($(".check_item:checked"), function () {
+				doctorNames += $(this).parents("tr").find("td:eq(2)").text()+",";
+				//组装doctor的ID的字符串
+				del_idstr += $(this).parents("tr").find("td:eq(1)").text()+"-";
+			});
+			doctorNames = doctorNames.substring(0,doctorNames.length-1);
+			del_idstr = del_idstr.substring(0,del_idstr.length-1);
+			if (confirm("确认删除【" + doctorNames + "】吗？")) {
+				//确认以后发送ajax请求
+				$.ajax({
+					url:"${APP_PATH}/doctor/"+del_idstr,
+					type:"DELETE",
+					success:function(result){
+						alert(result.msg);
+						to_page(currentPage);
+					}
+				});
+			}
 		});
 		
 		

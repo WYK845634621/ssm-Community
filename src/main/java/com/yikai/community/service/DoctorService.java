@@ -25,7 +25,6 @@ public class DoctorService {
 //	保存doctor
 	public void saveDoctor(Doctor doctor) {
 		doctorMapper.insertSelective(doctor);
-		
 	}
 
 
@@ -36,6 +35,31 @@ public class DoctorService {
 		criteria.andDoctorNameEqualTo(doctorName);
 		long count = doctorMapper.countByExample(example);
 		return count == 0;
+	}
+
+//	查询
+	public Doctor getDoctor(Integer id) {
+		Doctor doctor = doctorMapper.selectByPrimaryKey(id);
+		return doctor;
+	}
+
+//	更新
+	public void updateDoctor(Doctor doctor) {
+		doctorMapper.updateByPrimaryKeySelective(doctor);
+	}
+
+//	删除
+	public void deleteDoctor(Integer id) {
+		doctorMapper.deleteByPrimaryKey(id);
+		
+	}
+
+
+	public void deleteBatch(List<Integer> ids) {
+		DoctorExample example = new DoctorExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andDoctorIdIn(ids);
+		doctorMapper.deleteByExample(example);
 	}
 
 	

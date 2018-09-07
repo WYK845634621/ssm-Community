@@ -1,5 +1,6 @@
 package com.yikai.community.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,6 +29,47 @@ public class DoctorController {
 	
 	@Autowired
 	DoctorService doctorService;
+	
+//	删除医生,实现单个和批量删除
+	@ResponseBody
+	@RequestMapping(value="/doctor/{ids}", method=RequestMethod.DELETE)
+	public Msg delete(@PathVariable("ids") String ids){
+		if (ids.contains("-")) {
+			List<Integer> del_ids = new ArrayList<>();
+			//去除-
+			String[] str_ids = ids.split("-");
+			//组装id的集合
+			for (String string : str_ids) {
+				del_ids.add(Integer.parseInt(string));
+			}
+			doctorService.deleteBatch(del_ids);
+		}else{
+			int id = Integer.parseInt(ids);
+			doctorService.deleteDoctor(id);
+		}
+		return Msg.success();
+	}
+	
+	
+	
+//	更新医生
+	@ResponseBody
+	@RequestMapping(value="/doctor/{doctorId}", method=RequestMethod.PUT)
+	public Msg saveDoctor(Doctor doctor){
+		System.out.println("要更新的医生信息:" + doctor);
+		doctorService.updateDoctor(doctor);
+		return null;
+	}
+	
+	
+	
+//	根据ID查询
+	@RequestMapping(value="/doctor/{id}", method=RequestMethod.GET)
+	@ResponseBody
+	public Msg getDoctor(@PathVariable("id") Integer id){
+		Doctor doctor = doctorService.getDoctor(id);
+		return Msg.success().add("doctor", doctor);
+	}
 	
 	
 //	添加doctor保存   	

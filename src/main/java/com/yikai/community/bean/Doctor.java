@@ -2,7 +2,6 @@ package com.yikai.community.bean;
 
 import javax.validation.constraints.Pattern;
 
-import org.hibernate.validator.constraints.Email;
 
 public class Doctor {
     private Integer doctorId;
@@ -33,9 +32,20 @@ public class Doctor {
     private Community community;
     
 
-    public Doctor() {
-	super();
-}
+	public Doctor() {
+		super();
+	}
+    
+    
+
+	@Override
+	public String toString() {
+		return "Doctor [doctorId=" + doctorId + ", doctorName=" + doctorName + ", gender=" + gender + ", age=" + age
+				+ ", phone=" + phone + ", email=" + email + ", address=" + address + ", idcard=" + idcard + ", cId="
+				+ cId + ", sId=" + sId + ", community=" + community + "]";
+	}
+
+
 
 	public Doctor(Integer doctorId, String doctorName, String gender, Integer age, String phone, String email,
 		String address, String idcard, Integer cId, Integer sId) {
