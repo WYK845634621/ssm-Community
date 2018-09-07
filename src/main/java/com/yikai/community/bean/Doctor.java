@@ -1,16 +1,24 @@
 package com.yikai.community.bean;
 
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.Email;
+
 public class Doctor {
     private Integer doctorId;
 
+    @Pattern(regexp="(^[a-zA-Z0-9_-]{6,16}$)|(^[\u2E80-\u9FFF]{2,4})$", message="用户名必须是6-16字母数字组合或者2-4个汉字")
     private String doctorName;
 
     private String gender;
 
     private Integer age;
 
+    @Pattern(regexp="^[1][3,4,5,7,8][0-9]{9}$", message="手机号必须是13/5/7/8开头的十一位数字")
     private String phone;
 
+//  在java的后端校验中，\的意义不一样，所以需要额外加\
+    @Pattern(regexp="^([a-z0-9_\\.-]+)@([\\da-z\\.-]+)\\.([a-z\\.]{2,6})$", message="邮箱格式不正确")
     private String email;
 
     private String address;

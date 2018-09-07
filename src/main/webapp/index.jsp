@@ -279,7 +279,16 @@
 			navEle.appendTo("#page_nav_area");
 		}
 		
+		//封装一个清空表单的的方法	清空所有的表单样式及内容
+		function reset_form(ele) {
+			$(ele)[0].reset();
+			$(ele).find("*").removeClass("has-success has-error");
+			$(ele).find(".help-block").text("");
+		}
+		//点击新增按钮，弹出模态框
 		$("#doctor_add_model_btn").click(function () {
+			//清除表单数据，即表单重置
+			reset_form("#doctorAddModal form");
 			//发送ajax请求，查出部门信息，显示下拉列表
 			getCommunitys();
 			
@@ -337,6 +346,7 @@
 			return true;
 		}
 		
+		//封装的校验方法
 		function show_validate_msg(ele,status,msg) {
 			//清除校验状态
 			$(ele).parent().removeClass("has-success has-error");
@@ -359,8 +369,10 @@
 					success:function(result){
 						if (result.code == 100) {
 							show_validate_msg("#doctorName_add_input","success","用户名可用");
+							$("#doctor_save_btn").attr("ajax-va","success");
 						}else {
-							show_validate_msg("#doctorName_add_input","error","用户名不可用");
+							show_validate_msg("#doctorName_add_input","error",result.extend.va_msg);
+							$("#doctor_save_btn").attr("ajax-va","error");
 						}
 					}
 				});
@@ -371,16 +383,33 @@
 			if (!validate_add_form()) {
 				return false;
 			}
-			
+			//判断ajax的校验是否成功
+			if ($(this).attr("ajax-va") == "error") {
+				return false;
+			}
 			//2.发送ajax请求保存
 			  $.ajax({
 				url:"${APP_PATH}/doctor",
 				type:"POST",
 				data:$("#doctorAddModal form").serialize(),
 				success:function(result){
+					if (result.code == 100) {
 					//doctor保存成功后，需要关闭添加框，同时回到最后一页显示刚才添加的数据
 					$("#doctorAddModal").modal('hide');
 					to_page(totalRecord);
+					}else {
+						//即使绕过前端校验,也可以显示错误信息
+						if (undefined != result.extend.errorFields.email) {
+							show_validate_msg("#email_add_input","error",result.extend.errorFields.email);
+						}
+						if (undefined != result.extend.errorFields.phone) {
+							show_validate_msg("#phone_add_input","error",result.extend.errorFields.phone);			
+						}
+						if (undefined != result.extend.errorFields.doctorName) {
+							show_validate_msg("#doctorName_add_input","error",result.extend.errorFields.doctorName);			
+						}
+						
+					}
 				}
 			});  
 			
